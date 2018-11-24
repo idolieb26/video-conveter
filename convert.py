@@ -6,7 +6,7 @@ import json
 from peewee import *
 import os
 
-db = MySQLDatabase('convert', user='root', password='simba1234', host='localhost', port=3306)
+db = MySQLDatabase('convert', user='', password='', host='localhost', port=3306)
 
 
 class BaseModel(Model):
@@ -41,24 +41,21 @@ def validate(val):
     return val.encode('utf-8').decode('utf-8')
 
 
-mypath = '/home/asd/workstation/Python/convert'
-outpath = '/home/asd/workstation/Python/output'
-# mypath = '/users/nickburrett/downloads/freelancer/input⁩'
-# outpath = '/users/nickburrett/downloads/freelancer/output'
+mypath = '<input path here>'
+outpath = '<output path here>'
+
 
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
 def get_output_files():
-    print(os.path.isdir(outpath))
     if os.path.isdir(outpath):
         return [f for f in listdir(outpath) if isfile(join(outpath, f))]
     else:
-        print ("@@@@@@@@@@@@@@@@@@@@ Output folder doesn't exists @@@@@@@@@@@@@@2\n")
+        print ("@@@ Output folder doesn't exists @@@\n")
 
 
 for file in onlyfiles:
     if '.mov' in file or '.mp4' in file:
-        print(file)
         tup_resp = ffmpy.FFprobe(
             inputs={file: None},
             global_options=[
@@ -68,8 +65,7 @@ for file in onlyfiles:
         ).run(stdout=subprocess.PIPE)
 
         meta = json.loads(tup_resp[0].decode('utf-8'))
-        print(meta)
-        # pdb.set_trace()
+
         filename = ''
 
         query = (File.select(File.filename, Track.title, Artist.name)
@@ -107,4 +103,3 @@ for file in onlyfiles:
                     )
 
                     ff.run()
-                # pdb.set_trace()
